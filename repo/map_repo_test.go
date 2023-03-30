@@ -39,3 +39,23 @@ func TestMapRepoSaveAndGet(t *testing.T) {
 		t.FailNow()
 	}
 }
+
+func TestMapRepoDelete(t *testing.T) {
+	var r SampleRepo = newSampleRepo()
+
+	var id e.SampleEntityId = 42
+	in := e.NewSampleEntity()
+	in.SetId(id)
+	if _, err := r.Save(in); err != nil {
+		t.Log("Save() failed")
+		t.FailNow()
+	}
+
+	r.Delete(id)
+
+	_, err := r.Get(id)
+	if err == nil {
+		t.Log("Delete(itemId) failed to remove item from repo")
+		t.FailNow()
+	}
+}
