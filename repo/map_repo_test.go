@@ -1,35 +1,41 @@
 package repo
 
-import "testing"
+import (
+	"testing"
+
+	e "github.com/brandon-detty/go-api-tools/entity"
+)
+
+type SampleRepo Repo[e.SampleEntity, e.SampleEntityId]
+
+func newSampleRepo() SampleRepo {
+	return NewMapRepo[e.SampleEntity, e.SampleEntityId]()
+}
 
 func TestMapRepoSatisfiesRepo(t *testing.T) {
-	var r Repo[interface{}, int8] = NewMapRepo[interface{}, int8]()
+	var r SampleRepo = newSampleRepo()
 	_ = r
 }
 
-type name struct {
-	first string
-	last  string
-}
+func TestMapRepoSaveAndGet(t *testing.T) {
+	var r SampleRepo = newSampleRepo()
 
-func TestMapRepoSetAndGet(t *testing.T) {
-	var r Repo[name, int8] = NewMapRepo[name, int8]()
-
-	var id int8 = 42
-	in := &name{"Alan", "Atkins"}
-	if _, err := r.Set(id, in); err != nil {
-		t.Log("Set() failed")
+	var id e.SampleEntityId = 42
+	in := e.NewSampleEntity()
+	in.SetId(id)
+	if _, err := r.Save(in); err != nil {
+		t.Log("Save() failed")
 		t.FailNow()
 	}
 
 	out, err := r.Get(id)
 	if err != nil {
-		t.Log("Get(id) failed after Set(id, item)")
+		t.Log("Get(itemId) failed after Save(item)")
 		t.FailNow()
 	}
 
 	if in != out {
-		t.Log("Get(id) didn't return item after Set(id, item)")
+		t.Log("Get(itemId) didn't return item after Save(item)")
 		t.FailNow()
 	}
 }

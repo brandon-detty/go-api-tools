@@ -2,13 +2,15 @@ package repo
 
 import (
 	"fmt"
+
+	e "github.com/brandon-detty/go-api-tools/entity"
 )
 
-type MapRepo[T any, I comparable] struct {
+type MapRepo[T e.Entity[I], I comparable] struct {
 	store map[I]*T
 }
 
-func NewMapRepo[T any, I comparable]() *MapRepo[T, I] {
+func NewMapRepo[T e.Entity[I], I comparable]() *MapRepo[T, I] {
 	store := make(map[I]*T)
 	r := MapRepo[T, I]{
 		store,
@@ -16,7 +18,8 @@ func NewMapRepo[T any, I comparable]() *MapRepo[T, I] {
 	return &r
 }
 
-func (r *MapRepo[T, I]) Set(id I, item *T) (*T, error) {
+func (r *MapRepo[T, I]) Save(item *T) (*T, error) {
+	id := (*item).Id()
 	r.store[id] = item
 	return item, nil
 }
